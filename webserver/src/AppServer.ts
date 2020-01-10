@@ -21,7 +21,7 @@ export class AppServer extends Server {
 		
 		controllers.push(new AttentionController());
 		
-        super.addControllers(ctlrInstances);
+        super.addControllers(controllers);
 	}
 	
 	public start(): void {
