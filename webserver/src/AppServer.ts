@@ -10,27 +10,27 @@ export class AppServer extends Server {
 
 	public constructor() {
 		super(true);
-        this.app.use(bodyParser.json());
+		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({extended: true}));
 		
-        this.setupControllers();
+		this.setupControllers();
 	}
 
 	private setupControllers(): void {
-        const controllers = new Array<any>();
+		const controllers = new Array<any>();
 		
 		controllers.push(new AttentionController());
 		
-        super.addControllers(controllers);
+		super.addControllers(controllers);
 	}
 	
 	public start(): void {
-        this.app.get('*', (request, response) => {
-            response.send(`Started server on ${AppServer.port}`);
+		this.app.get('*', (request, response) => {
+			response.send(`Started server on ${AppServer.port}`);
 		});
 		
-        this.app.listen(AppServer.port, () => {
-            Logger.Imp(`Started server on ${AppServer.port}`);
-        });
-    }
+		this.app.listen(AppServer.port, () => {
+			Logger.Imp(`Started server on ${AppServer.port}`);
+		});
+	}
 }
