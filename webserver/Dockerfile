@@ -21,8 +21,12 @@ FROM node:12.13.0-slim
 WORKDIR /app
 ENV NODE_ENV=production
 
+EXPOSE 3000
+
 COPY package*.json ./
 RUN npm ci --quiet --only=production
 
 ## We just need the build to execute the command
-COPY --from=builder /usr/src/app/out ./out
+COPY --from=builder /usr/src/app/build ./build
+
+ENTRYPOINT ["node", "build/start.js"]
