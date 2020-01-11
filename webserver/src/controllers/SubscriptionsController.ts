@@ -26,9 +26,10 @@ export class SubscriptionsController {
 			return response.status(400).send("Bad request");
 		}
 
-		const pushSubscription = request.body as webpush.PushSubscription;
-
-		this.pushSubscriptionsManager.removeSubscription(pushSubscription);
+		const wasCurrentSubscriptionsListMutated = this.pushSubscriptionsManager.removeSubscription(request.body);
+		if (wasCurrentSubscriptionsListMutated) {
+			this.pushSubscriptionsManager.persist();
+		}
 
 		return response.status(200).json(new SuccessResponse());
 	}
@@ -40,9 +41,10 @@ export class SubscriptionsController {
 			return response.status(400).send("Bad request");
 		}
 
-		const pushSubscription = request.body as webpush.PushSubscription;
-
-		this.pushSubscriptionsManager.addSubscription(pushSubscription);
+		const wasCurrentSubscriptionsListMutated = this.pushSubscriptionsManager.addSubscription(request.body);
+		if (wasCurrentSubscriptionsListMutated) {
+			this.pushSubscriptionsManager.persist();
+		}
 
 		return response.status(200).json(new SuccessResponse());
 	}

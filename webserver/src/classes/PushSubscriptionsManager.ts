@@ -5,6 +5,9 @@ export class PushSubscriptionsManager {
 	private readonly pushSubscriptionsFilePath: string;
 	private pushSubscriptions: Array<webpush.PushSubscription>;
 
+	/**
+	 * The list of current push subscriptions
+	 */
 	public get currentSubscriptions(): ReadonlyArray<webpush.PushSubscription> {
 		return this.pushSubscriptions;
 	}
@@ -15,20 +18,40 @@ export class PushSubscriptionsManager {
 		this.pushSubscriptions = this.loadPushSubscriptionsFromFileSystem();
 	}
 
+	/**
+	 * An idempotent operation to add a push subscription to the list of current subscriptions
+	 * This method will not add a subscription that is already in the list
+	 * @param pushSubscription The push subscription to add
+	 * @returns A boolean indicating whether the list of current subscriptions was mutated
+	 */
 	public addSubscription(pushSubscription: webpush.PushSubscription) {
 		const currentIndex = this.getMatchingSubscriptionIndex(pushSubscription);
 		if (currentIndex === -1) {
 			this.pushSubscriptions.push(pushSubscription);
+			return true;
 		}
+
+		return false;
 	}
 
+	/**
+	 * An idempotent operation to remove a push subscription from the list of current subscriptions
+	 * @param pushSubscription The push subscription to remove
+	 * @returns A boolean indicating whether the list of current subscriptions was mutated
+	 */
 	public removeSubscription(pushSubscription: webpush.PushSubscription) {
 		const currentIndex = this.getMatchingSubscriptionIndex(pushSubscription);
 		if (currentIndex > -1) {
 			this.pushSubscriptions.splice(currentIndex, 1);
+			return true;
 		}
+
+		return false;
 	}
 
+	/**
+	 * Persists the list of current subscriptions
+	 */
 	public persist() {
 		const pushSubscriptionsListString = JSON.stringify(this.pushSubscriptions);
 		fs.writeFileSync(this.pushSubscriptionsFilePath, pushSubscriptionsListString);
