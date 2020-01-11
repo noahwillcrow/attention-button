@@ -1,26 +1,32 @@
 {
 	"compilerOptions": {
-	  "module": "commonjs",
-	  "strict": true,
-	  "baseUrl": "./",
-	  "outDir": "build",
-	  "removeComments": true,
-	  "experimentalDecorators": true,
-	  "target": "es6",
-	  "emitDecoratorMetadata": true,
-	  "moduleResolution": "node",
-	  "importHelpers": true,
-	  "types": [
-		"node"
-	  ],
-	  "typeRoots": [
-		"node_modules/@types"
-	  ]
+		"allowJs": true,
+		"module": "commonjs",
+		"strict": true,
+		"baseUrl": "./",
+		"outDir": "build",
+		"removeComments": true,
+		"experimentalDecorators": true,
+		"target": "es6",
+		"emitDecoratorMetadata": true,
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"plugins": [
+			{
+				"disallowSuperfluousObjectProperties": false,
+				"transform": "typescript-is/lib/transform-inline/transformer"
+			}
+		],
+		"types": [
+			"node"
+		],
+		"typeRoots": [
+			"node_modules/@types"
+		]
 	},
 	"include": [
-	  "./src/**/*.ts"
+		"./src/**/*.js",
+		"./src/**/*.ts"
 	],
-	"exclude": [
-	  "./src/public/"
-	]
-  }
+	"exclude": []
+}
