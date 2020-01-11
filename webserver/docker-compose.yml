@@ -1,8 +1,0 @@
-version: '3'
-
-services:
-  webserver:
-    build: .
-    container_name: webserver
-    ports:
-      - 3000:3000
