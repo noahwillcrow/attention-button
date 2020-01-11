@@ -21,7 +21,7 @@ FROM node:12.13.0-slim
 WORKDIR /app
 ENV NODE_ENV=production
 
-EXPOSE 3000
+EXPOSE 80
 
 COPY package*.json ./
 RUN npm ci --quiet --only=production
