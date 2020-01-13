@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: whoan/docker-build-with-cache-action@v2
         with:
+          context: "${{ secrets.WEBSERVER_CONTAINER_DIRECTORY }}"
           image_name: "${{ secrets.WEBSERVER_CONTAINER_NAME }}"
           registry: "${{ secrets.DOCKER_REGISTRY_URL }}"
           username: "${{ secrets.DOCKER_REGISTRY_USERNAME }}"
