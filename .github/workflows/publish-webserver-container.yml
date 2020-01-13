@@ -1,0 +1,17 @@
+name: Docker Registry Publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: |
+          CONTAINER_NAME=${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.WEBSERVER_CONTAINER_NAME }}:latest
+          docker build -t $CONTAINER_NAME ${{ secrets.WEBSERVER_CONTAINER_DIRECTORY }}
+          docker login ${{ secrets.PRIVATE_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p "${{ secrets.DOCKER_REGISTRY_PASSWORD }}"
+          docker push $CONTAINER_NAME
