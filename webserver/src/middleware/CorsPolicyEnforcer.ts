@@ -7,7 +7,9 @@ export class CorsPolicyEnforcer {
 
 	public static loadCorsPolicy() {
 		const patternStrings = fs.readFileSync("/volumes/config/allowed-origin-patterns.csv").toString().split(",");
-		CorsPolicyEnforcer.allowedOriginPatterns = patternStrings.filter(pattern => pattern !== "").map(patternString => new RegExp(patternString));
+		CorsPolicyEnforcer.allowedOriginPatterns = patternStrings
+			.filter(pattern => pattern !== "")
+			.map(patternString => new RegExp(patternString));
 	}
 
 	public static enforce(request: Request, response: Response, next: () => void) {
