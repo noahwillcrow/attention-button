@@ -2,17 +2,31 @@ import { Request, Response } from "express";
 import * as fs from "fs";
 
 export class CorsPolicyEnforcer {
-	private static corsPolicy?: string;
+	private static allowedOriginPatterns?: ReadonlyArray<RegExp>
 
 	public static loadCorsPolicy() {
-		CorsPolicyEnforcer.corsPolicy = fs.readFileSync("/volumes/config/cors-policy.txt").toString().trim();
+		const patternStrings = fs.readFileSync("/volumes/config/allowed-origin-patterns.csv").toString().split(",");
+		CorsPolicyEnforcer.allowedOriginPatterns = patternStrings.map(patternString => new RegExp(patternString));
 	}
 
 	public static enforce(request: Request, response: Response, next: () => void) {
-		if (CorsPolicyEnforcer.corsPolicy !== undefined) {
-			response.header("Access-Control-Allow-Origin", CorsPolicyEnforcer.corsPolicy);
+		if (CorsPolicyEnforcer.allowedOriginPatterns === undefined) {
+			next();
+			return;
 		}
 
-		next();
+		const requestOrigin = request.get("origin");
+
+		if (requestOrigin !== undefined) {
+			for (const pattern of CorsPolicyEnforcer.allowedOriginPatterns) {
+				if (pattern.test(requestOrigin)) {
+					response.header("Access-Control-Allow-Origin", requestOrigin);
+					next();
+					return;
+				}
+			}
+		}
+
+		response.status(401).send(`Origin ${requestOrigin} is not allowed access.`);
 	}
 }
