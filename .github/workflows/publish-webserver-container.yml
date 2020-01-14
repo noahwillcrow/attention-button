@@ -1,4 +1,4 @@
-name: Docker Registry Publish
+name: Publish Web Server Container Image
 
 on:
   push:
