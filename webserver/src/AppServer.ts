@@ -5,10 +5,10 @@ import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { NotificationsController } from "./controllers/NotificationsController";
 import { SubscriptionsController } from "./controllers/SubscriptionsController";
-import * as path from "path";
 import { VapidDetails } from "./interfaces/VapidDetails";
 import { PushSubscriptionsManager } from "./classes/PushSubscriptionsManager";
 import { SecurityKeyEnforcer } from "./middleware/SecurityKeyEnforcer";
+import { CorsPolicyEnforcer } from './middleware/CorsPolicyEnforcer';
 
 export class AppServer extends Server {
 	public constructor(pushSubscriptionsManager: PushSubscriptionsManager, vapidDetails: VapidDetails) {
@@ -29,6 +29,11 @@ export class AppServer extends Server {
 	}
 	
 	public start(port: number): void {
+		CorsPolicyEnforcer.loadCorsPolicy();
+		SecurityKeyEnforcer.loadSecurityKey();
+
+		this.app.use(CorsPolicyEnforcer.enforce);
+
 		this.app.listen(port, () => {
 			Logger.Imp(`Started server on ${port}`);
 		});

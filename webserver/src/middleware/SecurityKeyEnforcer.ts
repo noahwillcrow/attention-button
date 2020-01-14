@@ -1,14 +1,11 @@
 import { Request, Response } from "express";
+import * as fs from "fs";
 
 export class SecurityKeyEnforcer {
 	private static securityKey?: string;
 
-	public static setSecurityKey(securityKey: string) {
-		if (SecurityKeyEnforcer.securityKey !== undefined) {
-			throw "Security key is already set, cannot overwrite";
-		}
-
-		SecurityKeyEnforcer.securityKey = securityKey;
+	public static loadSecurityKey() {
+		SecurityKeyEnforcer.securityKey = fs.readFileSync("/volumes/config/security-key.txt").toString().trim();
 	}
 
 	public static enforce(request: Request, response: Response, next: () => void) {
