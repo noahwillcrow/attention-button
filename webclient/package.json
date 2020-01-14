@@ -1,0 +1,21 @@
+{
+  "name": "attention-button-webclient",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/start.js",
+  "scripts": {
+    "build": "tsc && cp -r src/html build && cp -r src/css build",
+    "start": "rm output.log; docker-compose up --build -d >> output.log",
+    "restart": "docker-compose up"
+  },
+  "author": "Noah Crowley",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^13.1.6"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "typescript": "^3.7.4"
+  }
+}

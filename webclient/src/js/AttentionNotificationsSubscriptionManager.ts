@@ -1,4 +1,4 @@
-const SubscriptionManager = (function () {
+const SubscriptionManager = (() => {
 	const urlSearchParams = new URLSearchParams(window.location.search);
 	const securityKey = urlSearchParams.get("key")!;
 
@@ -111,8 +111,12 @@ const SubscriptionManager = (function () {
 		logMessage(message, "error");
 	}
 
-	async function getVapidPublicKey(): Promise<string> {
-		return sendGet<{ publicKey: string }>("/subscriptions/vapid-public-key", true)
+	async function getMetadata(): Promise<Metadata> {
+		return sendGet<Metadata>("/metadata", false);
+	}
+
+	async function getVapidPublicKey(metadata: Metadata): Promise<string> {
+		return sendGet<{ publicKey: string }>(`${metadata.apiUrlBase}/subscriptions/vapid-public-key`, true)
 			.then(result => {
 				return result.publicKey;
 			});
@@ -128,7 +132,7 @@ const SubscriptionManager = (function () {
 		logInfo("serviceWorker exists in navigator");
 		
 		logInfo("Attempting to get existing service worker registration");
-		return navigator.serviceWorker.getRegistration("/client/js/service_workers/AttentionNotificationServiceWorker.js");
+		return navigator.serviceWorker.getRegistration("/js/service_workers/AttentionNotificationServiceWorker.js");
 	}
 
 	async function getOrCreateServiceWorkerRegistration(): Promise<ServiceWorkerRegistration> {
@@ -151,7 +155,7 @@ const SubscriptionManager = (function () {
 				logInfo("PushManager exists in window");
 
 				logInfo("Attempting to register a new service worker");
-				return navigator.serviceWorker.register("/client/js/service_workers/AttentionNotificationServiceWorker.js")
+				return navigator.serviceWorker.register("/js/service_workers/AttentionNotificationServiceWorker.js")
 					.then(newRegistration => {
 						logInfo("New service worker is registered");
 
@@ -165,7 +169,7 @@ const SubscriptionManager = (function () {
 		return swRegistration.pushManager.getSubscription();
 	}
 
-	async function subscribeToPushNotifications(vapidPublicKey: string, swRegistration: ServiceWorkerRegistration): Promise<void> {
+	async function subscribeToPushNotifications(metadata: Metadata, vapidPublicKey: string, swRegistration: ServiceWorkerRegistration): Promise<void> {
 		logInfo("Attempting to subscribe to push notifications");
 		
 		return getExistingPushManagerSubscription(swRegistration)
@@ -174,7 +178,7 @@ const SubscriptionManager = (function () {
 					logInfo("A push subscription already exists");
 
 					logInfo("Attempting to send existing subscription to server");
-					return sendPost<any>("/subscriptions", true, undefined, subscription)
+					return sendPost<any>(`${metadata.apiUrlBase}/subscriptions`, true, undefined, subscription)
 						.then(() => {
 							logInfo("Successfully established existing subscription with server");
 						});
@@ -193,7 +197,7 @@ const SubscriptionManager = (function () {
 					logInfo("Successfully created a new push manager subscription");
 
 					logInfo("Attempting to send new subscription to server");
-					return sendPost<any>("/subscriptions", true, undefined, newSubscription)
+					return sendPost<any>(`${metadata.apiUrlBase}/subscriptions`, true, undefined, newSubscription)
 						.then(() => {
 							logInfo("Successfully established new subscription with server");
 						});
@@ -201,7 +205,7 @@ const SubscriptionManager = (function () {
 			});
 	}
 
-	async function unsubscribeFromPushNotifications(swRegistration: ServiceWorkerRegistration): Promise<void> {
+	async function unsubscribeFromPushNotifications(metadata: Metadata, swRegistration: ServiceWorkerRegistration): Promise<void> {
 		logInfo("Attempting to unsubscribe from push notifications");
 
 		return getExistingPushManagerSubscription(swRegistration)
@@ -213,7 +217,7 @@ const SubscriptionManager = (function () {
 
 				logInfo("Found existing push manager subscription");
 
-				return deleteSubscriptionOnServer(pushSubscription)
+				return deleteSubscriptionOnServer(metadata, pushSubscription)
 					.then(() => {
 						logInfo("Attempting to unsubscribe push manager subscription");
 						return pushSubscription.unsubscribe()
@@ -230,9 +234,9 @@ const SubscriptionManager = (function () {
 			});
 	}
 
-	async function deleteSubscriptionOnServer(pushSubscription: PushSubscription) {
+	async function deleteSubscriptionOnServer(metadata: Metadata, pushSubscription: PushSubscription) {
 		logInfo("Attempting to communicate subscription removal with server");
-		return sendDelete<any>("/subscriptions", false, undefined, pushSubscription)
+		return sendDelete<any>(`${metadata.apiUrlBase}/subscriptions`, false, undefined, pushSubscription)
 			.then(() => {
 				logInfo("Successfully communicated subscription removal with server");
 			});
@@ -251,32 +255,36 @@ const SubscriptionManager = (function () {
 	}
 
 	async function subscribe() {
-		await getVapidPublicKey()
-			.then(vapidPublicKey => {
-				getOrCreateServiceWorkerRegistration()
-					.then(swRegistration => {
-						subscribeToPushNotifications(vapidPublicKey, swRegistration)
-							.then(() => {
-								setMessage("Subscription complete");
-							});
-					});
-			})
-			.catch(error => {
-				logError(error);
-				setMessage("Subscription failed");
-			});
+		await getMetadata().then(metadata => {
+			getVapidPublicKey(metadata)
+				.then(vapidPublicKey => {
+					getOrCreateServiceWorkerRegistration()
+						.then(swRegistration => {
+							subscribeToPushNotifications(metadata, vapidPublicKey, swRegistration)
+								.then(() => {
+									setMessage("Subscription complete");
+								});
+						});
+				})
+				.catch(error => {
+					logError(error);
+					setMessage("Subscription failed");
+				});
+		});
 	}
 
 	async function unsubscribe() {
-		await getExistingServiceWorkerRegistration()
-			.then(swRegistration => {
-				if (swRegistration === undefined) {
-					logInfo("No subscription to cancel");
-					return;
-				}
+		await getMetadata().then(metadata => {
+			getExistingServiceWorkerRegistration()
+				.then(swRegistration => {
+					if (swRegistration === undefined) {
+						logInfo("No subscription to cancel");
+						return;
+					}
 
-				return unsubscribeFromPushNotifications(swRegistration);
-			});
+					return unsubscribeFromPushNotifications(metadata, swRegistration);
+				})
+		});
 	}
 
 	return {

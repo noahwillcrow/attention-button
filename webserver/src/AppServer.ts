@@ -29,10 +29,6 @@ export class AppServer extends Server {
 	}
 	
 	public start(port: number): void {
-		this.app.get("/client/*", (request, response) => {
-			response.status(200).sendFile(path.join(__dirname, `/${request.url}`));
-		});
-		
 		this.app.listen(port, () => {
 			Logger.Imp(`Started server on ${port}`);
 		});

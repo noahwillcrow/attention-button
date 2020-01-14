@@ -1,0 +1,34 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"module": "commonjs",
+		"strict": true,
+		"baseUrl": "./",
+		"outDir": "build",
+		"removeComments": true,
+		"experimentalDecorators": true,
+		"target": "es2019",
+		"emitDecoratorMetadata": true,
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"plugins": [
+			{
+				"disallowSuperfluousObjectProperties": false,
+				"transform": "typescript-is/lib/transform-inline/transformer"
+			}
+		],
+		"types": [
+			"node"
+		],
+		"typeRoots": [
+			"node_modules/@types"
+		]
+	},
+	"include": [
+		"./src/css/*.css",
+		"./src/html/*.html",
+		"./src/**/*.js",
+		"./src/**/*.ts"
+	],
+	"exclude": []
+}
