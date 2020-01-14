@@ -18,6 +18,7 @@ export class AppServer extends Server {
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({extended: true}));
 		this.app.use(cors({
+			allowedHeaders: ["Accept", "Content-Type"],
 			origin: CorsPolicyEnforcer.enforce
 		}));
 		
