@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/start.js",
   "scripts": {
-    "build": "npx ttsc && cp -r src/client/html build/client && cp -r src/client/css build/client",
+    "build": "npx ttsc",
     "start": "rm output.log; docker-compose up --build -d >> output.log",
     "restart": "docker-compose up"
   },
