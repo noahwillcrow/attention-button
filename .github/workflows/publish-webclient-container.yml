@@ -1,0 +1,19 @@
+name: Publish Web Client Container Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: whoan/docker-build-with-cache-action@v2
+        with:
+          context: "${{ secrets.WEBCLIENT_CONTAINER_DIRECTORY }}"
+          image_name: "${{ secrets.DOCKER_REGISTRY_USERNAME }}/${{ secrets.WEBCLIENT_IMAGE_NAME }}"
+          registry: "${{ secrets.DOCKER_REGISTRY_URL }}"
+          username: "${{ secrets.DOCKER_REGISTRY_USERNAME }}"
+          password: "${{ secrets.DOCKER_REGISTRY_PASSWORD }}"
