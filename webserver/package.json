@@ -2,7 +2,7 @@
   "name": "webserver",
   "version": "1.0.0",
   "description": "",
-  "main": "src/start.ts",
+  "main": "build/start.js",
   "scripts": {
     "build": "npx ttsc && cp -r src/client/html build/client && cp -r src/client/css build/client",
     "start": "rm output.log; docker-compose up --build -d >> output.log",
