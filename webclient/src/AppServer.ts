@@ -26,7 +26,7 @@ export class AppServer {
 		});
 
 		this.app.get("*", (request, response) => {
-			response.sendFile(path.join(__dirname, `/html/${request.url}.html`));
+			response.sendFile(path.join(__dirname, `/html/${request.path}.html`));
 		});
 		
 		this.app.listen(port, () => {
