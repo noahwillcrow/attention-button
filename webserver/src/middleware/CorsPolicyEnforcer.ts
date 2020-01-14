@@ -20,7 +20,7 @@ export class CorsPolicyEnforcer {
 		if (requestOrigin !== undefined) {
 			for (const pattern of CorsPolicyEnforcer.allowedOriginPatterns) {
 				if (pattern.test(requestOrigin)) {
-					response.header("Access-Control-Allow-Origin", requestOrigin);
+					response.set("Access-Control-Allow-Origin", requestOrigin);
 					next();
 					return;
 				}
