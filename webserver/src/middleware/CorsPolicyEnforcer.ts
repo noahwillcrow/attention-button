@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import * as fs from "fs";
 import { Logger } from '@overnightjs/logger';
 
@@ -12,9 +11,7 @@ export class CorsPolicyEnforcer {
 			.map(patternString => new RegExp(patternString));
 	}
 
-	public static enforce(request: Request, response: Response, next: () => void) {
-		const requestOrigin = request.get("origin");
-
+	public static enforce(requestOrigin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
 		if (CorsPolicyEnforcer.allowedOriginPatterns !== undefined && requestOrigin !== undefined) {
 			Logger.Info(`Testing origin ${requestOrigin}`);
 
@@ -22,9 +19,7 @@ export class CorsPolicyEnforcer {
 				Logger.Info(`Testing pattern ${pattern}`);
 				if (pattern.test(requestOrigin)) {
 					Logger.Info(`${requestOrigin} passed the pattern`);
-					response.set("Access-Control-Allow-Origin", requestOrigin);
-					response.set("Vary", "Origin");
-					next();
+					callback(null, true);
 					return;
 				}
 				Logger.Info(`${requestOrigin} failed the pattern`);
@@ -33,6 +28,6 @@ export class CorsPolicyEnforcer {
 			Logger.Info(`${requestOrigin} failed all allowed origin patterns`);
 		}
 
-		response.status(401).send(`Origin ${requestOrigin} is not allowed access.`);
+		callback(new Error(`Origin ${requestOrigin} is not allowed access.`));
 	}
 }

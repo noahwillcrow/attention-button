@@ -1,6 +1,7 @@
 // Thanks to the following blog article for all the help: https://levelup.gitconnected.com/setup-express-with-typescript-in-3-easy-steps-484772062e01
 
 import * as bodyParser from "body-parser";
+import * as cors from "cors";
 import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { NotificationsController } from "./controllers/NotificationsController";
@@ -16,7 +17,9 @@ export class AppServer extends Server {
 		
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({extended: true}));
-		this.app.use(CorsPolicyEnforcer.enforce);
+		this.app.use(cors({
+			origin: CorsPolicyEnforcer.enforce
+		}));
 		
 		this.setupControllers(pushSubscriptionsManager, vapidDetails);
 	}
