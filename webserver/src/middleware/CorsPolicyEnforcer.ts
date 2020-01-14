@@ -11,11 +11,6 @@ export class CorsPolicyEnforcer {
 	}
 
 	public static enforce(request: Request, response: Response, next: () => void) {
-		if (request.method !== "OPTIONS") {
-			next();
-			return;
-		}
-
 		const requestOrigin = request.get("origin");
 
 		if (CorsPolicyEnforcer.allowedOriginPatterns !== undefined && requestOrigin !== undefined) {
