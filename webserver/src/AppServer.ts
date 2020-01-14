@@ -13,8 +13,10 @@ import { CorsPolicyEnforcer } from './middleware/CorsPolicyEnforcer';
 export class AppServer extends Server {
 	public constructor(pushSubscriptionsManager: PushSubscriptionsManager, vapidDetails: VapidDetails) {
 		super(true);
+		
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({extended: true}));
+		this.app.use(CorsPolicyEnforcer.enforce);
 		
 		this.setupControllers(pushSubscriptionsManager, vapidDetails);
 	}
@@ -31,8 +33,6 @@ export class AppServer extends Server {
 	public start(port: number): void {
 		CorsPolicyEnforcer.loadCorsPolicy();
 		SecurityKeyEnforcer.loadSecurityKey();
-
-		this.app.use(CorsPolicyEnforcer.enforce);
 
 		this.app.listen(port, () => {
 			Logger.Imp(`Started server on ${port}`);
