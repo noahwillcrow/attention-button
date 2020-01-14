@@ -23,6 +23,7 @@ export class CorsPolicyEnforcer {
 				if (pattern.test(requestOrigin)) {
 					Logger.Info(`${requestOrigin} passed the pattern`);
 					response.set("Access-Control-Allow-Origin", requestOrigin);
+					response.set("Vary", "Origin");
 					next();
 					return;
 				}
