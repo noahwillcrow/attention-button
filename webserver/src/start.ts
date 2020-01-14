@@ -9,8 +9,8 @@ const pushSubscriptionsManager = new PushSubscriptionsManager("/volumes/persiste
 const securityKey = fs.readFileSync("/volumes/config/security-key.txt").toString().trim();
 SecurityKeyEnforcer.setSecurityKey(securityKey);
 
-const rawVapidDetailsContent = fs.readFileSync("/volumes/config/vapid-details.json").toString();
-const vapidDetails = JSON.parse(rawVapidDetailsContent) as VapidDetails;
+const vapidDetailsFileContent = fs.readFileSync("/volumes/config/vapid-details.json").toString();
+const vapidDetails = JSON.parse(vapidDetailsFileContent) as VapidDetails;
 
 const appServer = new AppServer(pushSubscriptionsManager, vapidDetails);
 appServer.start(80);
