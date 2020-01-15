@@ -18,7 +18,8 @@ export class CorsPolicyEnforcer {
 			// If this is coming from the RaspPi or any other source that doesn't care about CORS,
 			// then I don't want to restrict that use-case.
 			// As such, if no request origin is given, always allow it through this step.
-			callback(null, true);	
+			callback(null, true);
+			return;
 		}
 		
 		if (CorsPolicyEnforcer.allowedOriginPatterns !== undefined) {
