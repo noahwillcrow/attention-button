@@ -41,7 +41,7 @@ class ButtonManager {
 			this.buttonClickSfxElement.currentTime = 0;
 			this.buttonClickSfxElement.play();
 
-			const message = this.messageInputElement.textContent !== null ? this.messageInputElement.textContent : "Attention needed!!";
+			const message = this.messageInputElement.value ? this.messageInputElement.value : "Attention needed!!";
 			this.metadataFetcher.getMetadata().then(metadata => sendPost<any>(`${metadata.apiUrlBase}/notifications`, true, undefined, {
 				message: message
 			} as SendNotificationRequest).then(() => console.log("notification sent")));
