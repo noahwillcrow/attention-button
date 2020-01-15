@@ -5,7 +5,7 @@ class ButtonManager {
 
 	public constructor(private readonly metadataFetcher: MetadataFetcher) {
 		this.buttonElement = this.mustGetElementById<HTMLDivElement>("button");
-		this.messageInputElement = this.mustGetElementById<HTMLInputElement>("mesage-input");
+		this.messageInputElement = this.mustGetElementById<HTMLInputElement>("message-input");
 
 		this.buttonClickSfxElement = new Audio("/content/sounds/button-click.wav");
 		this.buttonClickSfxElement.load();
