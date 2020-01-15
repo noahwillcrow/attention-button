@@ -1,9 +1,11 @@
 class ButtonManager {
 	private buttonElement: HTMLElement;
 	private buttonClickSfxElement: HTMLAudioElement;
+	private messageInputElement: HTMLInputElement;
 
 	public constructor(private readonly metadataFetcher: MetadataFetcher) {
-		this.buttonElement = this.mustGetElementById("button");
+		this.buttonElement = this.mustGetElementById<HTMLDivElement>("button");
+		this.messageInputElement = this.mustGetElementById<HTMLInputElement>("button");
 
 		this.buttonClickSfxElement = new Audio("/content/sounds/button-click.wav");
 		this.buttonClickSfxElement.load();
@@ -14,8 +16,8 @@ class ButtonManager {
 		this.listenForWindowSizeChanges();
 	}
 
-	private mustGetElementById(id: string): HTMLElement {
-		const element = document.getElementById(id);
+	private mustGetElementById<T extends HTMLElement>(id: string): T {
+		const element = document.getElementById(id) as T;
 		if (element === null) {
 			throw `No element with id "${id}"`
 		}
@@ -24,7 +26,7 @@ class ButtonManager {
 	}
 
 	private updateButtonSizeAndPosition(): void {
-		const buttonDiameter = (window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) * 0.8;
+		const buttonDiameter = ((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) - 60) * 0.8;
 
 		this.buttonElement.style.top = `${(window.innerHeight - buttonDiameter) / 2}px`;
 		this.buttonElement.style.left = `${(window.innerWidth - buttonDiameter) / 2}px`;
@@ -39,8 +41,9 @@ class ButtonManager {
 			this.buttonClickSfxElement.currentTime = 0;
 			this.buttonClickSfxElement.play();
 
+			const message = this.messageInputElement.textContent !== null ? this.messageInputElement.textContent : "Attention needed!!";
 			this.metadataFetcher.getMetadata().then(metadata => sendPost<any>(`${metadata.apiUrlBase}/notifications`, true, undefined, {
-				message: "Attention needed!!"
+				message: message
 			} as SendNotificationRequest).then(() => console.log("notification sent")));
 		});
 	}

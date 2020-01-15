@@ -12,6 +12,19 @@ body {
     background: #2a2a2a;
 }
 
+#message-input {
+	height: 60px;
+	width: 100%;
+
+	background: #111111;
+	border: none;
+	border-bottom: 2px solid #0f0f0f;
+
+	color: white;
+	font-size: 48px;
+	text-align: center;
+}
+
 #button {
 	background: rgb(200,0,0);
 	background: radial-gradient(circle, rgba(200,0,0,1) 0%, rgba(68,0,0,1) 100%);
