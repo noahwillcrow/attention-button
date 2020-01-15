@@ -12,20 +12,22 @@ export class CorsPolicyEnforcer {
 	}
 
 	public static enforce(requestOrigin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-		if (CorsPolicyEnforcer.allowedOriginPatterns !== undefined && requestOrigin !== undefined) {
-			Logger.Info(`Testing origin ${requestOrigin}`);
-
+		if (!requestOrigin) {
+			// CORS is a consumer protection measure
+			// As such, it is up to the browser to enforce
+			// If this is coming from the RaspPi or any other source that doesn't care about CORS,
+			// then I don't want to restrict that use-case.
+			// As such, if no request origin is given, always allow it through this step.
+			callback(null, true);	
+		}
+		
+		if (CorsPolicyEnforcer.allowedOriginPatterns !== undefined) {
 			for (const pattern of CorsPolicyEnforcer.allowedOriginPatterns) {
-				Logger.Info(`Testing pattern ${pattern}`);
 				if (pattern.test(requestOrigin)) {
-					Logger.Info(`${requestOrigin} passed the pattern`);
 					callback(null, true);
 					return;
 				}
-				Logger.Info(`${requestOrigin} failed the pattern`);
 			}
-
-			Logger.Info(`${requestOrigin} failed all allowed origin patterns`);
 		}
 
 		callback(new Error(`Origin ${requestOrigin} is not allowed access.`));
