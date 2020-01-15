@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/start.js",
   "scripts": {
-    "build": "tsc && cp -r src/html build && cp -r src/css build",
+    "build": "tsc && cp -r src/html build && cp -r src/css build && cp -r src/content build",
     "start": "rm output.log; docker-compose up --build -d >> output.log",
     "restart": "docker-compose up"
   },

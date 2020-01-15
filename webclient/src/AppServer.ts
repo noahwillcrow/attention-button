@@ -21,6 +21,10 @@ export class AppServer {
 			response.sendFile(path.join(__dirname, `/${request.url}`));
 		});
 
+		this.app.get("/content/*", (request, response) => {
+			response.sendFile(path.join(__dirname, `/${request.url}`));
+		});
+
 		this.app.get("/js/*", (request, response) => {
 			response.sendFile(path.join(__dirname, `/${request.url}`));
 		});

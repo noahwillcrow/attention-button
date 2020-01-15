@@ -5,15 +5,16 @@
 		
 		<link rel="stylesheet" href="/css/button.css" />
         
+		<script src="/js/lib/httpLib.js" type="text/javascript"></script>
+		<script src="/js/classes/MetadataFetcher.js" type="text/javascript"></script>
         <script src="/js/managers/ButtonManager.js" type="text/javascript"></script>
-        
-        <script type="text/javascript">
-            const buttonManager = new ButtonManager();
-        </script>
     </head>
     <body>
-        <div id="button-container">
-            <div id="button"></div>
-        </div>
+        <div id="button"></div>
+        
+        <script type="text/javascript">
+			const metadataFetcher = new MetadataFetcher();
+            const buttonManager = new ButtonManager(metadataFetcher);
+        </script>
     </body>
 </html>
