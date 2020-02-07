@@ -49,17 +49,6 @@ export class SubscriptionsController {
 		return response.status(200).json(new SuccessResponse());
 	}
 
-	@Get("set-up")
-	@Middleware([SecurityKeyEnforcer.enforce])
-	public setUpPushNotificationsSubscription(request: Request, response: Response) {
-		return response.status(200).sendFile(path.join(__dirname, "/../client/html/subscribe.html"));
-	}
-
-	@Get("tear-down")
-	public tearDownPushNotificationsSubscription(request: Request, response: Response) {
-		return response.status(200).sendFile(path.join(__dirname, "/../client/html/unsubscribe.html"));
-	}
-
 	@Get("vapid-public-key")
 	@Middleware([SecurityKeyEnforcer.enforce])
 	public getVapidPublicKey(request: Request, response: Response) {
